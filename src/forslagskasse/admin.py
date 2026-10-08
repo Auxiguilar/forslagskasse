@@ -1,6 +1,15 @@
 from django.contrib import admin
 
-from .models import Suggestion
+from .models import Suggestion, Attachment
 
 
-admin.site.register(Suggestion)
+@admin.register(Suggestion)
+class SuggestionAdmin(admin.ModelAdmin):
+    list_display = ("title", "submitted_at")
+    readonly_fields = ("title", "message", "submitted_at")
+
+
+@admin.register(Attachment)
+class AttachmentAdmin(admin.ModelAdmin):
+    # Stub
+    ...

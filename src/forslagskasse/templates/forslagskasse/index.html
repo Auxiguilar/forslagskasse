@@ -6,11 +6,12 @@
     <body>
         <h1>Forslagskasse</h1>
         <p>Gi et forslag:</p>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data" onsubmit="return confirm('Send inn dette forslaget?');">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Submit</button>
+            <button type="submit">Send inn</button>
         </form>
-        <a href="{% url 'admin:index' %}">Admin</a>
+        <h3>Admin</h3>
+        <a href="{% url 'admin:index' %}"><button type="button">Logg inn</button></a>
     </body>
 </html>
