@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="no">
+    <head>
+        <title>Forslagskasse</title>
+    </head>
+    <body>
+        <h1>Forslagskasse</h1>
+        <p>Gi et forslag:</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit</button>
+        </form>
+        <a href="{% url 'admin:index' %}">Admin</a>
+    </body>
+</html>
