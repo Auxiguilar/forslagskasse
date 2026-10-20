@@ -12,6 +12,7 @@ class MultipleFileInput(forms.FileInput):
 # Make a form based on Suggestion model.
 class SuggestionForm(forms.ModelForm):
     attachments = forms.FileField(
+        label="Vedlegg",
         required=False,
         widget=MultipleFileInput,
     )

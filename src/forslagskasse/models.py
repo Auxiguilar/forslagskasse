@@ -18,4 +18,8 @@ class Attachment(models.Model):
         related_name="attachments",
     )
     file = models.FileField("Fil", upload_to="suggestions/")
+
+    class Meta:
+        verbose_name = "Vedlegg"
+        verbose_name_plural = "Vedlegg"
     
