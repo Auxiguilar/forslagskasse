@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.utils.html import format_html
+from django.urls import reverse
+from pathlib import Path
 
 from .models import Suggestion, Attachment
 
@@ -7,8 +10,24 @@ from .models import Suggestion, Attachment
 class AttachmentInline(admin.TabularInline):
     model = Attachment
     extra = 0
-    readonly_fields = ("file",)
+    fields = ("download_link",)
+    readonly_fields = ("download_link",)
     can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    @admin.display(description="Vedlegg")
+    def download_link(self, obj):
+        if obj and obj.file:
+            return format_html(
+                '<a href="{}">Last ned</a>',
+                reverse(
+                    "forslagskasse:download_attachment",
+                    args=[obj.pk],
+                ),
+            )
+        return "Ingen fil"  
 
 
 @admin.register(Suggestion)

@@ -1,4 +1,5 @@
 from django.db import models
+from pathlib import Path
 
 
 class Suggestion(models.Model):
@@ -10,6 +11,9 @@ class Suggestion(models.Model):
         verbose_name = "Forslag"
         verbose_name_plural = "Forslag"
 
+    def __str__(self) -> str:
+        return self.title
+
 
 class Attachment(models.Model):
     suggestion = models.ForeignKey(
@@ -17,9 +21,12 @@ class Attachment(models.Model):
         on_delete=models.CASCADE,
         related_name="attachments",
     )
-    file = models.FileField("Fil", upload_to="suggestions/")
+    file = models.FileField("Fil", upload_to="vedlegg/")
 
     class Meta:
         verbose_name = "Vedlegg"
         verbose_name_plural = "Vedlegg"
+
+    def __str__(self) -> str:
+        return Path(self.file.name).name
     

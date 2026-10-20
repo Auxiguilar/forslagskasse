@@ -1,5 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ValidationError
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import FileResponse
 from django import forms
 from pathlib import Path
 
@@ -88,3 +90,15 @@ def index(request):
 
     # Give SuggestionForm as context to be used in index template.
     return render(request, "forslagskasse/index.html", {"form": form})
+
+
+@staff_member_required
+def download_attachment(request, attachment_id):
+    attachment = get_object_or_404(Attachment, pk=attachment_id)
+
+    return FileResponse(
+        attachment.file.open("rb"),
+        as_attachment=True,
+        filename=attachment.file.name.split("/")[-1],
+    )
+
