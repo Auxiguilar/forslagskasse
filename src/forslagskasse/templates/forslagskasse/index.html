@@ -11,6 +11,28 @@
             {{ form.as_p }}
             <button type="submit">Send inn</button>
         </form>
+        <script>
+        const input = document.getElementById("id_attachments");
+        const maxFiles = 5;
+        const maxFileSize = 5 * 1024 * 1024;
+
+        input.addEventListener("change", () => {
+            const files = Array.from(input.files);
+
+            if (files.length > maxFiles) {
+            alert("Du kan laste opp maksimalt 5 filer.");
+            input.value = "";
+            return;
+            }
+
+            const oversized = files.find(file => file.size > maxFileSize);
+
+            if (oversized) {
+            alert(`Filen "${oversized.name}" er større enn 5 MiB.`);
+            input.value = "";
+            }
+        });
+        </script>
         <h3>Admin</h3>
         <a href="{% url 'admin:index' %}"><button type="button">Logg inn</button></a>
     </body>

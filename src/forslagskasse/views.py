@@ -21,6 +21,14 @@ ALLOWED_EXTENSIONS = {
 class MultipleFileInput(forms.FileInput):
     allow_multiple_selected = True
 
+    def __init__(self, attrs=None):
+        attrs = {
+            **(attrs or {}),
+            "accept": ",".join(sorted(ALLOWED_EXTENSIONS)),
+            "multiple": True,
+        }
+        super().__init__(attrs)
+
 
 class MultipleFileField(forms.FileField):
     def clean(self, data, initial=None):
@@ -59,7 +67,7 @@ class SuggestionForm(forms.ModelForm):
     attachments = MultipleFileField(
         label="Vedlegg",
         required=False,
-        widget=MultipleFileInput(),
+        widget=MultipleFileInput(attrs={"id": "id_attachments"}),
     )
 
     class Meta:
