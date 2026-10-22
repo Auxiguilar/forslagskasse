@@ -1,4 +1,3 @@
-
 import tempfile
 
 from pathlib import Path
@@ -11,6 +10,19 @@ from django.utils.datastructures import MultiValueDict
 
 from .models import Suggestion, Attachment
 from .views import SuggestionForm
+from .forms import MAX_FILE_SIZE
+
+
+TEST_MEDIA_DIR = Path(__file__).parent / "test_media"
+
+
+def make_sample_upload(extension):
+    path = TEST_MEDIA_DIR / f"sample.{extension}"
+    return SimpleUploadedFile(
+        path.name,
+        path.read_bytes(),
+        content_type="application/octet-stream",
+    )
 
 
 class SuggestionModelTests(TestCase):
@@ -39,7 +51,7 @@ class AttachmentModelTests(TestCase):
 
     def test_string_representation_is_filename(self):
         attachment = Attachment(
-            file="forslag_vedlegg/rapport.pdf",
+            file="vedlegg/rapport.pdf",
         )
 
         self.assertEqual(str(attachment), "rapport.pdf")
@@ -52,7 +64,7 @@ class AttachmentModelTests(TestCase):
 
         attachment = Attachment.objects.create(
             suggestion=suggestion,
-            file="forslag_vedlegg/rapport.pdf",
+            file="vedlegg/rapport.pdf",
         )
 
         self.assertEqual(attachment.suggestion, suggestion)
@@ -88,24 +100,29 @@ class SuggestionFormTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("message", form.errors)
 
-    def test_valid_attachment_is_accepted(self):
-        uploaded_file = SimpleUploadedFile(
-            "rapport.pdf",
-            b"Testinnhold",
-            content_type="application/pdf",
+    # Most embarrassing if my program generates false positives for invalidity!
+    def test_valid_attachments_are_accepted(self):
+        extensions = (
+        "jpg", "png", "svg",
+        "doc", "docx", "xls", "xlsx",
+        "pdf", "odt", "ods", "txt",
         )
 
-        form = SuggestionForm(
-            data={
-                "title": "Testforslag",
-                "message": "Dette er en test.",
-            },
-            files=MultiValueDict({
-                "attachments": [uploaded_file],
-            }),
-        )
+        for extension in extensions:
+            with self.subTest(extension=extension):
+                uploaded_file = make_sample_upload(extension)
 
-        self.assertTrue(form.is_valid(), form.errors)
+                form = SuggestionForm(
+                    data={
+                        "title": "Testforslag",
+                        "message": "Dette er en test.",
+                    },
+                    files=MultiValueDict({
+                        "attachments": [uploaded_file],
+                    }),
+                )
+
+                self.assertTrue(form.is_valid(), form.errors)
 
     def test_disallowed_extension_is_rejected(self):
         uploaded_file = SimpleUploadedFile(
@@ -172,8 +189,6 @@ class SuggestionFormTests(TestCase):
 
 
     def test_oversized_attachment_is_rejected(self):
-        from .views import MAX_FILE_SIZE
-
         uploaded_file = self.make_upload(
             "large.txt",
             MAX_FILE_SIZE + 1,
@@ -192,8 +207,6 @@ class SuggestionFormTests(TestCase):
 
 
     def test_attachment_at_size_limit_is_accepted(self):
-        from .views import MAX_FILE_SIZE
-
         uploaded_file = self.make_upload(
             "limit.txt",
             MAX_FILE_SIZE,
@@ -232,9 +245,9 @@ class AttachmentDownloadTests(TestCase):
         self.attachment = Attachment.objects.create(
             suggestion=self.suggestion,
             file=SimpleUploadedFile(
-                "rapport.pdf",
+                "rapport.txt",
                 b"Test file contents",
-                content_type="application/pdf",
+                content_type="text/plain",
             ),
         )
 
@@ -269,7 +282,7 @@ class AttachmentDownloadTests(TestCase):
             response["Content-Disposition"],
         )
         self.assertIn(
-            "rapport.pdf",
+            "rapport.txt",
             response["Content-Disposition"],
         )
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-labelledby="t">
+<title id="t">Sample SVG image (1 KB)</title>
+<rect width="1200" height="900" fill="#16202b"/>
+<rect x="579" y="369" width="139" height="45" fill="#e3b505" fill-opacity="0.55"/>
+<circle cx="492" cy="272" r="45" fill="#d64933" fill-opacity="0.6"/>
+<circle cx="852" cy="299" r="15" fill="#d64933" fill-opacity="0.6"/>
+<circle cx="181" cy="236" r="60" fill="#4f9d69" fill-opacity="0.6"/>
+<circle cx="638" cy="549" r="53" fill="#e3b505" fill-opacity="0.6"/>
+<circle cx="43" cy="342" r="32" fill="#d64933" fill-opacity="0.6"/>
+<circle cx="1155" cy="430" r="12" fill="#ebebeb" fill-opacity="0.6"/>
+<rect x="529" y="753" width="37" height="17" fill="#e3b505" fill-opacity="0.55"/>
+<!-- ............................................................................................................................................................................. -->
+</svg>
