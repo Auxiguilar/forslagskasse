@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from pathlib import Path
 
 
@@ -29,4 +31,12 @@ class Attachment(models.Model):
 
     def __str__(self) -> str:
         return Path(self.file.name).name
-    
+
+
+# Immediate deletion!
+@receiver(post_delete, sender=Attachment)
+def delete_attachment_file(sender, instance, **kwargs):
+    if instance.file:
+        file_name = instance.file.name
+        storage = instance.file.storage
+        storage.delete(file_name)

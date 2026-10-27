@@ -1,4 +1,5 @@
 import tempfile
+import os
 
 from pathlib import Path
 
@@ -288,3 +289,44 @@ class AttachmentDownloadTests(TestCase):
 
         downloaded_content = b"".join(response.streaming_content) # type: ignore
         self.assertEqual(downloaded_content, b"Test file contents")
+
+class AttachmentDeletionTests(TestCase):
+    def test_deleting_attachment_deletes_file(self):
+        suggestion = Suggestion.objects.create(
+            title="Testforslag",
+            message="Dette er en test.",
+        )
+
+        attachment = Attachment.objects.create(
+            suggestion=suggestion,
+            file=SimpleUploadedFile(
+                "rapport.txt",
+                b"Test file contents",
+            ),
+        )
+        file_path = attachment.file.path
+
+        attachment.delete()
+
+        self.assertFalse(os.path.exists(file_path))
+
+
+    def test_deleting_suggestion_deletes_attachment_files(self):
+        suggestion = Suggestion.objects.create(
+            title="Testforslag",
+            message="Dette er en test.",
+        )
+                
+        attachment = Attachment.objects.create(
+            suggestion=suggestion,
+            file=SimpleUploadedFile(
+                "rapport.txt",
+                b"Test file contents",
+            ),
+        )
+        file_path = attachment.file.path
+
+        suggestion.delete()
+
+        self.assertFalse(os.path.exists(file_path))
+        self.assertFalse(Attachment.objects.filter(pk=attachment.pk).exists())

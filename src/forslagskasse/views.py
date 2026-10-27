@@ -25,7 +25,11 @@ def index(request):
         form = SuggestionForm()
 
     # Give SuggestionForm as context to be used in index template.
-    return render(request, "forslagskasse/index.html", {"form": form})
+    return render(
+        request,
+        "forslagskasse/index.html",
+        {"form": form, "is_staff": request.user.is_staff}
+    )
 
 
 @staff_member_required
