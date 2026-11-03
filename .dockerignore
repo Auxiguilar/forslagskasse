@@ -1,0 +1,30 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Django
+db.sqlite3
+.django*/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project
+media/
+
+# VSCode
+.vscode/
+
+# Environment
+.env
+.gitignore
+.git/
+
+# Scripts
+*.sh
+*.bat
+
+# Docker
+Dockerfile
