@@ -14,7 +14,7 @@ services:
  
  django-web:
    build: .
-   container_name: django-docker
+   container_name: forslagskasse
    ports:
      - "8000:8000"
    depends_on:
@@ -31,7 +31,10 @@ services:
      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
      DATABASE_HOST: ${DATABASE_HOST}
      DATABASE_PORT: ${DATABASE_PORT}
+   volumes:
+      - media_data:/app/media
    env_file:
      - .env
 volumes:
    postgres_data:
+   media_data:

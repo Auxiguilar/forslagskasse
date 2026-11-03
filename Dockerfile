@@ -1,4 +1,4 @@
-# 1st stage: install dependencies
+# 1st stage: Install dependencies
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS builder
 
 WORKDIR /app
@@ -9,7 +9,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --locked --no-install-project
 
 
-# 2nd stage: run the application
+# 2nd stage: Run the application
 FROM python:3.12-slim-bookworm
 
 RUN useradd -m -r appuser
@@ -25,7 +25,12 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONFAULTHANDLER=1
 
+RUN mkdir -p /app/media/vedlegg && chown -R appuser:appuser /app/media
+RUN mkdir -p /app/staticfiles && chown -R appuser:appuser /app/staticfiles
+
 USER appuser
+
+RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 

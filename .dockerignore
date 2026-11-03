@@ -25,3 +25,6 @@ media/
 # Scripts
 *.sh
 *.bat
+
+# Docker
+Dockerfile
