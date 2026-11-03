@@ -6,8 +6,7 @@ En enkel, nettbasert forslagskasse der brukere kan sende inn forslag med vedlegg
 
 For å installere og kjøre forslagskassen trenger du:
 
-- [Python](https://www.python.org/downloads/) 3.12 eller høyere.
-- [uv](https://docs.astral.sh/uv/) for installasjon og håndtering av prosjektets avhengigheter.
+- [Docker](https://docs.docker.com/get-docker/) med Docker Compose.
 
 Du trenger også tilgang til prosjektfilene.
 
@@ -29,82 +28,81 @@ Hvis du har Git installert, kan du klone prosjektet fra kommandolinjen:
 git clone https://github.com/Auxiguilar/forslagskasse
 ```
 
-## Installer prosjektet
+## Konfigurer prosjektet
 
-Åpne en terminal i prosjektmappen, altså mappen som inneholder `manage.py`.
+Åpne en terminal i prosjektmappen, altså mappen som inneholder `compose.yaml`.
 
-Kjør deretter oppsettskriptet som passer til operativsystemet ditt.
+Opprett en lokal miljøfil ved å kopiere `.env.example`:
 
 **Linux og macOS**
 
 ```bash
-chmod +x setup.sh
-./setup.sh
+cp .env.example .env
 ```
 
 **Windows**
 
-Kjør følgende i en kommandoprompt i prosjektmappen:
-
 ```bat
-setup.bat
+copy .env.example .env
 ```
 
-Oppsettskriptet installerer prosjektets avhengigheter, kjører databasemigreringer og tester forslagskassen. Hvis et trinn mislykkes, stopper kjøringen.
+Åpne `.env` og konfigurer verdiene etter behov. Du må blant annet angi en hemmelig nøkkel (`DJANGO_SECRET_KEY`), databasepassord og tillatte vertsnavn (`DJANGO_ALLOWED_HOSTS`).
+
+Miljøfilen inneholder konfigurasjon og hemmeligheter og skal ikke deles.
 
 ## Start forslagskassen
 
-Når oppsettet er fullført, starter du applikasjonen med:
-
-**Linux og macOS**
+Kjør følgende kommando i prosjektmappen:
 
 ```bash
-./start.sh
+docker compose up --build -d
 ```
 
-**Windows**
+Docker bygger applikasjonsbildet og starter tjenestene i bakgrunnen.
 
-```bat
-start.bat
+Første gang du starter prosjektet, må du også opprette databasetabellene:
+
+```bash
+docker compose exec django-web python manage.py migrate
 ```
 
-Åpne deretter følgende adresse i nettleseren:
+Forslagskassen er nå tilgjengelig på:
 
-`http://127.0.0.1:8000/`
+`http://localhost:8000/`
 
 ## Administrasjon
 
 Administrasjonssiden er tilgjengelig på:
 
-`http://127.0.0.1:8000/admin/`
+`http://localhost:8000/admin/`
 
 Administratorer må logge inn for å lese innsendte forslag og laste ned vedlegg. Tilgang og rettigheter administreres gjennom Django.
 
-## Opprett administratorkonto
+### Opprett administratorkonto
 
 Før du kan logge inn på administrasjonssiden, må du opprette en administratorkonto.
 
-Åpne en terminal i prosjektmappen og kjør:
+Kjør følgende kommando i prosjektmappen:
 
 ```bash
-uv run manage.py createsuperuser
+docker compose exec django-web python manage.py createsuperuser
 ```
 
 Følg instruksjonene i terminalen for å angi brukernavn, e-postadresse og passord. E-postadressen kan være valgfri, avhengig av konfigurasjonen.
 
-Når kontoen er opprettet, starter du forslagskassen og åpner administrasjonssiden:
+Når kontoen er opprettet, åpner du administrasjonssiden:
 
-`http://127.0.0.1:8000/admin/`
+`http://localhost:8000/admin/`
 
 Logg inn med brukernavnet og passordet du nettopp opprettet.
 
 Ta vare på innloggingsopplysningene. Superbrukeren har omfattende rettigheter i applikasjonen.
 
-## Opprett brukerkontoer
+### Opprett brukerkontoer
 
 En superbruker kan opprette kontoer for andre som skal administrere forslagskassen, uten å gi dem full tilgang til systemet.
 
-1. Logg inn på administrasjonssiden med superbrukerkontoen din: `http://127.0.0.1:8000/admin/`
+1. Logg inn på administrasjonssiden med superbrukerkontoen din: `http://localhost:8000/admin/`
 2. Gå til **Brukere** og velg **Legg til ny bruker**.
 3. Opprett brukeren med brukernavn og passord.
 4. Åpne den nye brukeren og aktiver **Administrasjonsstatus**.
@@ -128,14 +126,38 @@ Forslagskassen støtter vedlegg i følgende formater:
 
 Hvert forslag kan ha maksimalt fem vedlegg, med en maksimal filstørrelse på 5 MB per vedlegg.
 
+## Stopp og start forslagskassen
+
+For å stoppe tjenestene kjører du:
+
+```bash
+docker compose down
+```
+
+For å starte dem igjen uten å bygge bildet på nytt:
+
+```bash
+docker compose up -d
+```
+
+Databasen lagres i et eget Docker-volum og beholdes når containerne stoppes eller erstattes.
+
+**Merk:** Ikke bruk `docker compose down -v` med mindre du ønsker å slette de tilknyttede volumene og dermed også lagrede data.
+
 ## Feilsøking
 
 Hvis installasjonen eller oppstarten mislykkes:
 
-1. Kontroller at Python og `uv` er installert.
+1. Kontroller at Docker kjører.
 2. Kontroller at du kjører kommandoene fra prosjektmappen.
-3. Les feilmeldingen i terminalen. Den kan inneholde informasjon om hva som gikk galt.
-4. Kontroller at nødvendige avhengigheter er installert, og at databasemigreringene er gjennomført.
+3. Les feilmeldingene i terminalen.
+4. Kontroller at `.env` er opprettet og inneholder gyldige verdier.
+
+Du kan undersøke loggene til Django-tjenesten med:
+
+```bash
+docker compose logs django-web
+```
 
 Hvis problemet vedvarer, kan du rapportere det på prosjektets GitHub-side.
 
