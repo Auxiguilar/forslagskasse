@@ -12,7 +12,10 @@ RUN uv sync --locked --no-install-project
 # 2nd stage: Run the application
 FROM python:3.12-slim-bookworm
 
-RUN useradd -m -r appuser
+ARG APP_UID=1000
+ARG APP_GID=1000
+RUN groupadd --gid "$APP_GID" appuser \
+	&& useradd --uid "$APP_UID" --gid appuser --create-home appuser
 
 WORKDIR /app
 

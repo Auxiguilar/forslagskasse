@@ -13,11 +13,13 @@ Thumbs.db
 
 # Project
 media/
+postgres_data/
 
 # VSCode
 .vscode/
 
 # Environment
+.env.example
 .env
 .gitignore
 .git/
@@ -28,3 +30,4 @@ media/
 
 # Docker
 Dockerfile
+.dockerignore

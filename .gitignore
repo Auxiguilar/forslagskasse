@@ -13,6 +13,7 @@ Thumbs.db
 
 # Project
 media/
+postgres_data/
 
 # VSCode
 .vscode/

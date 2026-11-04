@@ -50,6 +50,10 @@ copy .env.example .env
 
 Miljøfilen inneholder konfigurasjon og hemmeligheter og skal ikke deles.
 
+På Linux settes `APP_UID` og `APP_GID` til brukerens ID-er slik at appen får
+skrivetilgang til `media/`. Standardverdien er `1000`; hvis ID-ene dine er
+annerledes, finn dem med `id -u` og `id -g` og oppdater verdiene i `.env`.
+
 ## Start forslagskassen
 
 Kjør følgende kommando i prosjektmappen:
@@ -59,6 +63,9 @@ docker compose up --build -d
 ```
 
 Docker bygger applikasjonsbildet og starter tjenestene i bakgrunnen.
+
+Opplastede filer lagres i prosjektmappen `media/`, og PostgreSQL-data lagres i
+`postgres_data/`.
 
 Første gang du starter prosjektet, må du også opprette databasetabellene:
 
@@ -143,9 +150,9 @@ For å starte dem igjen uten å bygge bildet på nytt:
 docker compose up -d
 ```
 
-Databasen lagres i et eget Docker-volum og beholdes når containerne stoppes eller erstattes.
-
-**Merk:** Ikke bruk `docker compose down -v` med mindre du ønsker å slette de tilknyttede volumene og dermed også lagrede data.
+Database og opplastede filer lagres i prosjektmappene `postgres_data/` og
+`media/`. Dataene blir derfor liggende når containerne stoppes eller erstattes.
+Ta sikkerhetskopi av disse mappene for å bevare dataene.
 
 ## Feilsøking
 
