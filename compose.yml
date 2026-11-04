@@ -6,11 +6,15 @@ services:
      POSTGRES_USER: ${DATABASE_USERNAME}
      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
    ports:
-     - "5432:5432"
+     - "127.0.0.1:5433:5432"
    volumes:
      - postgres_data:/var/lib/postgresql/data
-   env_file:
-     - .env
+   healthcheck:
+     test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+     interval: 10s
+     timeout: 5s
+     retries: 5
+     start_period: 10s
  
  django-web:
    build: .
@@ -18,7 +22,8 @@ services:
    ports:
      - "8000:8000"
    depends_on:
-     - db
+     db:
+       condition: service_healthy
    environment:
      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
      DEBUG: ${DEBUG}
@@ -33,8 +38,6 @@ services:
      DATABASE_PORT: ${DATABASE_PORT}
    volumes:
       - media_data:/app/media
-   env_file:
-     - .env
 volumes:
    postgres_data:
    media_data:

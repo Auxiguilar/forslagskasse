@@ -28,6 +28,9 @@ class Attachment(models.Model):
     class Meta:
         verbose_name = "Vedlegg"
         verbose_name_plural = "Vedlegg"
+        permissions = [
+            ("download_attachment", "Can download Vedlegg"),
+        ]
 
     def __str__(self) -> str:
         return Path(self.file.name).name

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ValidationError
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import permission_required
 from django.http import FileResponse
 
 from .models import Attachment
@@ -33,6 +34,7 @@ def index(request):
 
 
 @staff_member_required
+@permission_required({"forslagskasse.download_attachment"}, raise_exception=True)
 def download_attachment(request, attachment_id):
     attachment = get_object_or_404(Attachment, pk=attachment_id)
 

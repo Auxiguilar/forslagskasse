@@ -109,11 +109,14 @@ En superbruker kan opprette kontoer for andre som skal administrere forslagskass
 5. Under **Brukerrettigheter** gir du brukeren følgende rettigheter:
    - `Forslagskasse | Forslag | Can view Forslag`
    - `Forslagskasse | Vedlegg | Can view Vedlegg`
+   - `Forslagskasse | Vedlegg | Can download Vedlegg`
 6. Lagre brukeren.
 
-Brukeren kan nå logge inn på administrasjonssiden, lese innsendte forslag og laste ned vedlegg. Brukeren trenger ikke ha **Superbruker status** eller rettighetene **Add**, **Change** og **Delete** for disse modellene.
+`Can view Forslag` gir tilgang til å lese forslagene. `Can view Vedlegg` gir tilgang til å se vedleggsoppføringene i administrasjonssiden, og `Can download attachment` gir tilgang til å laste ned filene.
 
-**Merk:** Brukeren må ha **Administrasjonsstatus** for å få tilgang til administrasjonssiden og laste ned vedlegg. Det er ikke nødvendig å gi brukeren flere rettigheter enn de som er angitt ovenfor.
+Brukeren trenger ikke ha **Superbruker status** eller rettighetene **Add**, **Change** og **Delete** for disse modellene.
+
+**Merk:** Brukeren må ha **Administrasjonsstatus** for å få tilgang til administrasjonssiden og laste ned vedlegg.
 
 ## Vedlegg
 

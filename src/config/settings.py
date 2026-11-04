@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.environ.get("DEBUG", default=0)) # 0???
+DEBUG = True if os.environ.get("DEBUG") == "True" else False
 
 
 # Application definition
@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': "django.db.backends.{}".format(
             os.getenv("DATABASE_ENGINE",'sqlite3')
         ),
-        'NAME': os.getenv("DATABASE_NAME", "forslagskasse"),
+        'NAME': os.getenv("DATABASE_NAME", "db.sqlite3"),
         "USER": os.getenv("DATABASE_USERNAME", "forslagskasseuser"),
         "PASSWORD": os.getenv("DATABASE_PASSWORD", "password"),
         "HOST": os.getenv("DATABASE_HOST", "127.0.0.1"),
@@ -127,13 +127,3 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-
-# Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
-
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}

@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -257,22 +258,65 @@ class AttachmentDownloadTests(TestCase):
             args=[self.attachment.pk],
         )
 
+    def create_staff_user(self, username, permission_codenames):
+        User = get_user_model()
+        user = User.objects.create_user(
+            username=username,
+            password="test-password",
+            is_staff=True,
+        )
+        permissions = Permission.objects.filter(
+            content_type__app_label="forslagskasse",
+            codename__in=permission_codenames,
+        )
+        user.user_permissions.add(*permissions)
+        self.client.force_login(user)
+        return user
+
+    def test_view_only_staff_sees_filename_without_download_link(self):
+        self.create_staff_user(
+            "testviewer",
+            ["view_suggestion", "view_attachment"],
+        )
+
+        response = self.client.get(
+            reverse(
+                "admin:forslagskasse_suggestion_change",
+                args=[self.suggestion.pk],
+            ),
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "rapport.txt")
+        self.assertNotContains(response, "Last ned")
+        self.assertNotContains(response, self.url)
+
+    def test_download_permission_shows_download_link_in_admin(self):
+        self.create_staff_user(
+            "testdownloader",
+            ["view_suggestion", "view_attachment", "download_attachment"],
+        )
+
+        response = self.client.get(
+            reverse(
+                "admin:forslagskasse_suggestion_change",
+                args=[self.suggestion.pk],
+            ),
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Last ned")
+        self.assertContains(response, self.url)
+
     def test_anonymous_user_cannot_download(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, 302)
 
     def test_staff_user_can_download(self):
-        User = get_user_model()
-        User.objects.create_user(
-            username="testadmin",
-            password="test-password",
-            is_staff=True,
-        )
-
-        self.client.login(
-            username="testadmin",
-            password="test-password",
+        self.create_staff_user(
+            "testadmin",
+            ["download_attachment"],
         )
 
         response = self.client.get(self.url)

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
+from pathlib import Path
 
 from .models import Suggestion, Attachment
 
@@ -9,8 +10,12 @@ from .models import Suggestion, Attachment
 class AttachmentInline(admin.TabularInline):
     model = Attachment
     extra = 0
-    fields = ("download_link",)
-    readonly_fields = ("download_link",)
+    readonly_fields = ("download_link", "attachment_name")
+
+    def get_fields(self, request, obj=None):
+        if request.user.has_perm("forslagskasse.download_attachment"):
+            return ("download_link",)
+        return ("attachment_name",)
 
     def has_add_permission(self, request, obj=None):
         return request.user.is_superuser
@@ -28,6 +33,12 @@ class AttachmentInline(admin.TabularInline):
                     args=[obj.pk],
                 ),
             )
+        return "Ingen fil"
+
+    @admin.display(description="Vedlegg")
+    def attachment_name(self, obj):
+        if obj and obj.file:
+            return Path(obj.file.name).name
         return "Ingen fil"
 
 
