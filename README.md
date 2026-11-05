@@ -50,6 +50,10 @@ copy .env.example .env
 
 Miljøfilen inneholder konfigurasjon og hemmeligheter og skal ikke deles.
 
+Hvis standardportene allerede er i bruk, kan du endre `DJANGO_HOST_PORT` og
+`POSTGRES_HOST_PORT` i `.env`. For eksempel eksponerer
+`DJANGO_HOST_PORT=8080` nettsiden på port `8080`.
+
 På Linux settes `APP_UID` og `APP_GID` til brukerens ID-er slik at appen får
 skrivetilgang til `media/`. Standardverdien er `1000`; hvis ID-ene dine er
 annerledes, finn dem med `id -u` og `id -g` og oppdater verdiene i `.env`.
@@ -73,13 +77,15 @@ Første gang du starter prosjektet, må du også opprette databasetabellene:
 docker compose exec django-web python manage.py migrate
 ```
 
-Forslagskassen er nå tilgjengelig på:
+Forslagskassen er nå tilgjengelig på porten som er angitt i `DJANGO_HOST_PORT`
+(standard `8000`):
 
 `http://localhost:8000/`
 
 ## Administrasjon
 
-Administrasjonssiden er tilgjengelig på:
+Administrasjonssiden er tilgjengelig på porten som er angitt i
+`DJANGO_HOST_PORT` (standard `8000`):
 
 `http://localhost:8000/admin/`
 

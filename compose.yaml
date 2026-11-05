@@ -6,7 +6,7 @@ services:
      POSTGRES_USER: ${DATABASE_USERNAME}
      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
    ports:
-     - "127.0.0.1:5433:5432"
+     - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
    volumes:
      - ./postgres_data:/var/lib/postgresql/data
    healthcheck:
@@ -24,7 +24,7 @@ services:
        APP_GID: ${APP_GID:-1000}
    container_name: forslagskasse
    ports:
-     - "8000:8000"
+     - "${DJANGO_HOST_PORT:-8000}:8000"
    depends_on:
      db:
        condition: service_healthy
