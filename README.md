@@ -1,5 +1,7 @@
 # Forslagskasse
 
+[English](README.en.md) | [Norsk](README.md)
+
 En enkel, nettbasert forslagskasse der brukere kan sende inn forslag med vedlegg. Innsendte forslag kan leses av administratorer.
 
 ## Krav
@@ -125,7 +127,7 @@ En superbruker kan opprette kontoer for andre som skal administrere forslagskass
    - `Forslagskasse | Vedlegg | Can download Vedlegg`
 6. Lagre brukeren.
 
-`Can view Forslag` gir tilgang til å lese forslagene. `Can view Vedlegg` gir tilgang til å se vedleggsoppføringene i administrasjonssiden, og `Can download attachment` gir tilgang til å laste ned filene.
+`Can view Forslag` gir tilgang til å lese forslagene. `Can view Vedlegg` gir tilgang til å se vedleggsoppføringene i administrasjonssiden, og `Can download Vedlegg` gir tilgang til å laste ned filene.
 
 Brukeren trenger ikke ha **Superbruker status** eller rettighetene **Add**, **Change** og **Delete** for disse modellene.
 
