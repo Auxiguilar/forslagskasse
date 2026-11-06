@@ -1,5 +1,6 @@
 import tempfile
 import os
+import importlib
 
 from pathlib import Path
 
@@ -16,6 +17,33 @@ from .forms import MAX_FILE_SIZE
 
 
 TEST_MEDIA_DIR = Path(__file__).parent / "test_media"
+
+
+class CookieSettingsTests(TestCase):
+    """Production cookie settings should be secure when debug is off."""
+
+    def test_secure_cookies_are_enabled_in_production(self):
+        import config.settings as settings_module
+
+        original = {
+            "DEBUG": os.environ.get("DEBUG"),
+            "DJANGO_SECRET_KEY": os.environ.get("DJANGO_SECRET_KEY"),
+        }
+
+        try:
+            os.environ["DEBUG"] = "False"
+            os.environ["DJANGO_SECRET_KEY"] = "test-secret-key"
+            importlib.reload(settings_module)
+            self.assertTrue(settings_module.SESSION_COOKIE_SECURE)
+            self.assertTrue(settings_module.CSRF_COOKIE_SECURE)
+            self.assertEqual(settings_module.SECURE_PROXY_SSL_HEADER, ("HTTP_X_FORWARDED_PROTO", "https"))
+        finally:
+            for key, value in original.items():
+                if value is None:
+                    os.environ.pop(key, None)
+                else:
+                    os.environ[key] = value
+            importlib.reload(settings_module)
 
 
 def make_sample_upload(extension):

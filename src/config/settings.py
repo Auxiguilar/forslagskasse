@@ -24,11 +24,21 @@ MEDIA_URL = "/media/"
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
+DEBUG = os.getenv("DEBUG", "False").strip().lower() in {"1", "true", "yes", "on"}
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.environ.get("DEBUG") == "True" else False
+SECURE_PROXY_SSL_HEADER = (
+    "HTTP_X_FORWARDED_PROTO",
+    "https",
+) if os.getenv("SECURE_PROXY_SSL_HEADER", "False").strip().lower() in {"1", "true", "yes", "on"} else None
+
+SECURE_SSL_REDIRECT = (
+    not DEBUG
+    and os.getenv("SECURE_SSL_REDIRECT", "False").strip().lower() in {"1", "true", "yes", "on"}
+)
+SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "False").strip().lower() in {"1", "true", "yes", "on"}
+CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "False").strip().lower() in {"1", "true", "yes", "on"}
 
 
 # Application definition
